@@ -2,6 +2,12 @@
 
 > A browser-based fantasy RPG where an AI Game Master runs the entire adventure — powered by Google Gemini 2.5 Flash.
 
+<div align="center">
+
+[![▶ Play Now](https://img.shields.io/badge/▶%20PLAY%20NOW-frp--game.netlify.app-gold?style=for-the-badge&logo=netlify&logoColor=white&labelColor=8b4a10&color=c97020)](https://frp-game.netlify.app/)
+
+</div>
+
 ![AI Dungeon Master](https://img.shields.io/badge/Status-MVP%20v1-gold?style=flat-square)
 ![Tech](https://img.shields.io/badge/Stack-HTML%20%2B%20CSS%20%2B%20Vanilla%20JS-brown?style=flat-square)
 ![API](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-blue?style=flat-square)
