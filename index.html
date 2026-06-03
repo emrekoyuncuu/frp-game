@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Dungeon Master</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══ Loading Overlay ══════════════════════════════════════════ -->
+<div id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div id="loading-text">Yükleniyor...</div>
+</div>
+
+<!-- ══ Toast Notification ═══════════════════════════════════════ -->
+<div id="toast"></div>
+
+<!-- ══ Dice Modal ════════════════════════════════════════════════ -->
+<div id="dice-modal">
+  <button id="dice-modal-close">✕ Kapat</button>
+
+  <div class="dice-header">
+    <h3>Zar At</h3>
+    <p id="dice-player-name" style="color:var(--text-dim);font-size:0.9rem;margin:4px 0 8px;font-family:'Cinzel',serif;letter-spacing:1px;"></p>
+    <div class="dice-meta">
+      <span><small>DC</small><strong id="dice-dc-val">—</strong></span>
+      <span><small>Stat</small><strong id="dice-stat-val">—</strong></span>
+    </div>
+  </div>
+
+  <div class="dice-display" id="dice-display">20</div>
+
+  <button id="roll-btn">🎲 ZARI AT</button>
+
+  <div class="dice-result-area" id="dice-result-area"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SCREEN: MAIN MENU
+     ══════════════════════════════════════════════════════════════ -->
+<div id="screen-menu" class="screen active">
+  <div class="menu-logo">
+    <h1>AI Dungeon Master</h1>
+    <p class="subtitle">Yapay Zeka Destekli Fantezi Rol Yapma</p>
+  </div>
+
+  <div class="menu-buttons">
+    <button id="new-game-btn" class="btn-primary">⚔️ Yeni Oyun</button>
+    <div class="menu-separator">— veya —</div>
+    <button id="continue-btn" class="btn-ghost" style="display:none">📜 Kaldığın Yerden Devam Et</button>
+  </div>
+
+  <div class="menu-footer">AI Dungeon Master · Faz 1 MVP</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SCREEN: API KEY
+     ══════════════════════════════════════════════════════════════ -->
+<div id="screen-api" class="screen">
+  <div class="api-box">
+    <h2>🔑 Gemini API Anahtarı</h2>
+    <p>
+      AI Dungeon Master, Google'ın Gemini 2.5 Flash modelini kullanır.<br>
+      Ücretsiz API anahtarını almak için:
+      <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a>
+      adresine git — kredi kartı gerekmez.<br><br>
+      Anahtarın yalnızca tarayıcında saklanır, hiçbir yere gönderilmez.
+    </p>
+
+    <input type="password" id="api-key-input" class="parchment-input"
+           placeholder="AIza..." autocomplete="off">
+
+    <div class="api-actions">
+      <button id="api-back-btn" class="btn-ghost">← Geri</button>
+      <button id="api-save-btn" class="btn-primary">Devam Et →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SCREEN: LOBBY
+     ══════════════════════════════════════════════════════════════ -->
+<div id="screen-lobby" class="screen">
+  <div class="lobby-box">
+    <h2>🏰 Lobi</h2>
+
+    <p class="section-label">Oyuncu Sayısı</p>
+    <div class="count-row">
+      <button class="count-btn active" data-count="1">1</button>
+      <button class="count-btn" data-count="2">2</button>
+      <button class="count-btn" data-count="3">3</button>
+      <button class="count-btn" data-count="4">4</button>
+      <button class="count-btn" data-count="5">5</button>
+      <button class="count-btn" data-count="6">6</button>
+    </div>
+
+    <p class="section-label">Oyuncu İsimleri</p>
+    <div id="name-fields">
+      <div class="name-row">
+        <label>Oyuncu 1</label>
+        <input class="name-input parchment-input" type="text" placeholder="Oyuncu 1 adı..." maxlength="20">
+      </div>
+    </div>
+
+    <button id="lobby-start-btn" class="btn-primary" style="width:100%;margin-top:8px">
+      Karakterleri Oluştur →
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SCREEN: CHARACTER CREATION
+     ══════════════════════════════════════════════════════════════ -->
+<div id="screen-character" class="screen">
+  <div class="char-header">
+    <div class="char-header-top">
+      <div>
+        <h2>Karakter Oluştur</h2>
+        <div id="char-for-label"></div>
+      </div>
+      <button id="char-random-btn" class="btn-random">🎲 Rastgele Karakter</button>
+    </div>
+
+    <div class="step-indicator">
+      <div class="step-dot active" title="İsim">1</div>
+      <div class="step-connector"></div>
+      <div class="step-dot" title="Irk">2</div>
+      <div class="step-connector"></div>
+      <div class="step-dot" title="Sınıf">3</div>
+      <div class="step-connector"></div>
+      <div class="step-dot" title="Geçmiş">4</div>
+      <div class="step-connector"></div>
+      <div class="step-dot" title="Statlar">5</div>
+      <div class="step-connector"></div>
+      <div class="step-dot" title="Onay">6</div>
+    </div>
+  </div>
+
+  <div class="char-content" id="char-step-content">
+    <!-- Wizard steps rendered here by JS -->
+  </div>
+
+  <div class="char-footer">
+    <button id="char-back-btn" class="btn-ghost" style="display:none">← Geri</button>
+    <button id="char-next-btn" class="btn-primary">İleri →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SCREEN: CAMPAIGN START
+     ══════════════════════════════════════════════════════════════ -->
+<div id="screen-campaign" class="screen">
+  <div class="campaign-box">
+    <h2>📜 Kampanya Başlangıcı</h2>
+    <p>
+      Dungeon Master'a kampanyanı anlat. Ne kadar detay verirsen o kadar iyi bir başlangıç alırsın.
+    </p>
+
+    <textarea id="campaign-textarea" class="parchment-input"
+              placeholder="Örnek: Karanlık bir orman kenarındaki köy gizemli kaybolmalarla sarsılıyor. Ekibimiz paralı asker grubu. Atmosfer: karanlık ama esprili. Düşman: doğaüstü. Güçlük: orta."></textarea>
+
+    <p class="examples-label">HAZIR ÖRNEKLER</p>
+    <div id="campaign-examples">
+      <button class="example-btn"
+              data-prompt="Orta çağ, bir port şehri. Ekibimiz deniz korsanı avcıları. Gizemli bir deniz canavarı gemileri batırıyor. Atmosfer: macera dolu ve tehlikeli. Güçlük: orta-zor.">
+        🌊 Deniz Canavarı — Port şehrinde korsanlık ve gizem
+      </button>
+      <button class="example-btn"
+              data-prompt="Antik bir zindan keşfi. Ekibimiz hazine avcıları. Lanetli bir ejderhanın hazinesini arıyoruz. Atmosfer: klasik D&D, komik momentler olsun. Güçlük: orta.">
+        🐉 Zindan Keşfi — Lanetli ejderha hazinesi
+      </button>
+      <button class="example-btn"
+              data-prompt="Distopik bir ortaçağ şehri. Ekibimiz gizli direniş örgütü. Zalim bir kral karşı savaşıyoruz. Atmosfer: karanlık, politik entrikalar. Güçlük: zor.">
+        👑 Siyasi İhtilal — Zalim kral karşı direniş
+      </button>
+    </div>
+
+    <div class="campaign-actions">
+      <button id="campaign-back-btn" class="btn-ghost">← Geri</button>
+      <button id="campaign-start-btn" class="btn-primary">⚔️ Kampanyayı Başlat</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SCREEN: GAME
+     ══════════════════════════════════════════════════════════════ -->
+<div id="screen-game" class="screen">
+
+  <!-- Left: Character Panels -->
+  <div id="character-panels">
+    <!-- Rendered by JS -->
+  </div>
+
+  <!-- Right: Main game area -->
+  <div id="game-main">
+
+    <!-- Top bar -->
+    <div id="game-topbar">
+      <span class="topbar-title">AI Dungeon Master</span>
+      <span id="current-player-indicator">Yükleniyor...</span>
+      <button id="settings-btn">⚙ Ayarlar</button>
+    </div>
+
+    <!-- Chat feed — scrollable narrative history -->
+    <div id="chat-feed">
+      <!-- DM & player bubbles appended by JS -->
+    </div>
+
+    <!-- Current event + action choices (pinned above input) -->
+    <div id="game-actions-area">
+      <div class="event-header">
+        <div id="atmosphere-badge" class="atmo-badge atmo-exploration">🗺️ exploration</div>
+        <div id="event-text">Kampanya başladığında olay burada görünecek...</div>
+      </div>
+      <div id="action-buttons"></div>
+    </div>
+
+    <!-- Custom action input (always visible at bottom) -->
+    <form id="custom-action-form">
+      <input type="text" id="custom-action-input"
+             placeholder="Kendi aksiyonunu yaz... (DM DC belirler)"
+             autocomplete="off">
+      <button type="submit" class="send-btn">🎲 At</button>
+    </form>
+
+  </div><!-- /game-main -->
+
+</div><!-- /screen-game -->
+
+<!-- ══ Scripts ═══════════════════════════════════════════════════ -->
+<script src="js/data.js"></script>
+<script src="js/character.js"></script>
+<script src="js/dice.js"></script>
+<script src="js/imageGen.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
